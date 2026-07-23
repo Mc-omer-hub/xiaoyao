@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>职业详情 — 逍遥PVP</title>
+    <link rel="icon" type="image/x-icon" href="icon_64x64.ico">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #38bdf8;
+            --primary-dark: #0ea5e9;
+            --primary-light: #7dd3fc;
+            --primary-glow: rgba(56, 189, 248, 0.12);
+            --accent: #e63946;
+            --bg-dark: #080810;
+            --bg-card: #10101e;
+            --bg-card-hover: #16162a;
+            --bg-section: #0c0c18;
+            --bg-section-dark: #06060c;
+            --text: #e8e8f0;
+            --text-dim: #8888a0;
+            --text-muted: #5a5a72;
+            --border: #1a1a30;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --radius: 12px;
+            --radius-lg: 20px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: var(--primary); transition: var(--transition); }
+        a:hover { color: var(--primary-light); }
+        img { max-width: 100%; height: auto; }
+        ::selection { background: rgba(56, 189, 248, 0.25); color: #fff; }
+
+        /* Nav */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(8, 8, 16, 0.85);
+            backdrop-filter: blur(20px) saturate(1.2);
+            -webkit-backdrop-filter: blur(20px) saturate(1.2);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: var(--transition);
+        }
+        .nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(240,160,48,0.12) 20%, rgba(240,160,48,0.2) 50%, rgba(240,160,48,0.12) 80%, transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .nav.scrolled::after { opacity: 1; }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-left {
+            display: flex; align-items: center; gap: 16px;
+        }
+        .nav-back {
+            display: flex; align-items: center; gap: 6px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            font-family: var(--font);
+        }
+        .nav-back:hover {
+            color: var(--primary-light);
+            border-color: rgba(240,160,48,0.3);
+            background: rgba(240,160,48,0.05);
+        }
+        .nav-back svg { width: 14px; height: 14px; flex-shrink: 0; }
+        .nav-brand {
+            display: flex; align-items: center; gap: 10px;
+            color: var(--text);
+        }
+        .nav-icon { width: 28px; height: 28px; border-radius: 6px; }
+        .nav-title {
+            font-size: 1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-prof-name {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: rgba(240,160,48,0.05);
+            border: 1px solid rgba(240,160,48,0.1);
+        }
+
+        /* Hero */
+        .detail-hero {
+            position: relative;
+            padding: 120px 0 80px;
+            overflow: hidden;
+        }
+        .detail-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(240,160,48,0.07) 0%, transparent 55%);
+            pointer-events: none;
+        }
+        .detail-hero .container {
+            max-width: 1000px; margin: 0 auto; padding: 0 24px;
+            position: relative; z-index: 1;
+        }
+        .prof-header {
+            display: flex; align-items: flex-start; gap: 32px;
+            flex-wrap: wrap;
+        }
+        .prof-header-icon {
+            width: 90px; height: 90px;
+            border-radius: 18px;
+            object-fit: contain;
+            flex-shrink: 0;
+            box-shadow: 0 0 48px rgba(240,160,48,0.15);
+            image-rendering: pixelated;
+            background: rgba(240,160,48,0.04);
+            padding: 10px;
+        }
+        .prof-header-info { flex: 1; min-width: 240px; }
+        .prof-diff-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            border: 1px solid;
+        }
+        .prof-header-info h1 {
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .prof-header-info .tagline {
+            font-size: 1.1rem;
+            color: var(--primary-light);
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .prof-header-info .desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            max-width: 700px;
+        }
+        .prof-meta {
+            display: flex; gap: 14px; margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .prof-meta span {
+            font-size: 0.75rem;
+            padding: 5px 12px;
+            border-radius: 6px;
+            background: rgba(240,160,48,0.06);
+            border: 1px solid rgba(240,160,48,0.08);
+            color: var(--text-dim);
+            letter-spacing: 0.5px;
+        }
+
+        /* Section */
+        .section {
+            padding: 50px 0;
+            position: relative;
+        }
+        .section-dark { background: var(--bg-section-dark); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: 1px;
+        }
+        .section-title .icon-dot {
+            width: 10px; height: 10px;
+            border-radius: 3px;
+            background: var(--primary);
+            box-shadow: 0 0 10px rgba(240,160,48,0.4);
+        }
+
+        /* Items Grid */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .item-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            gap: 14px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .item-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(240,160,48,0.15), transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .item-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(240,160,48,0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(240,160,48,0.03);
+        }
+        .item-card:hover::before { opacity: 1; }
+
+        .item-icon {
+            width: 44px; height: 44px;
+            border-radius: 8px;
+            object-fit: contain;
+            flex-shrink: 0;
+            background: rgba(240,160,48,0.05);
+            padding: 6px;
+            image-rendering: pixelated;
+        }
+        .item-icon-placeholder {
+            width: 44px; height: 44px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: rgba(240,160,48,0.05);
+            border: 1px dashed rgba(240,160,48,0.12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+        .item-info h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text);
+            letter-spacing: 0.3px;
+        }
+        .item-type {
+            display: inline-block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 3px;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .type-weapon { background: rgba(255,85,85,0.08); color: #ff6b6b; border: 1px solid rgba(255,85,85,0.12); }
+        .type-armor { background: rgba(85,255,255,0.08); color: #55ffff; border: 1px solid rgba(85,255,255,0.12); }
+        .type-consumable { background: rgba(85,255,85,0.08); color: #55ff55; border: 1px solid rgba(85,255,85,0.12); }
+        .type-utility { background: rgba(255,255,85,0.08); color: #ffff55; border: 1px solid rgba(255,255,85,0.12); }
+        .item-info .item-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .skill-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: calc(var(--radius-lg) + 1px);
+            background: linear-gradient(135deg, rgba(240,160,48,0.06), transparent 50%);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+        .skill-card:hover::before { opacity: 1; }
+        .skill-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(240,160,48,0.12);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(240,160,48,0.04);
+        }
+        .skill-header {
+            display: flex; align-items: flex-start; gap: 16px;
+            margin-bottom: 16px;
+        }
+        .skill-icon {
+            width: 52px; height: 52px;
+            border-radius: 12px;
+            object-fit: contain;
+            flex-shrink: 0;
+            background: rgba(240,160,48,0.06);
+            padding: 8px;
+            image-rendering: pixelated;
+            border: 1px solid rgba(240,160,48,0.1);
+        }
+        .skill-meta h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+        .skill-type-badge {
+            display: inline-block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+        .skill-active { background: rgba(240,160,48,0.12); color: var(--primary-light); }
+        .skill-passive { background: rgba(85,255,255,0.08); color: #55ffff; }
+        .skill-unavailable {
+            background: rgba(255,85,85,0.08);
+            color: #ff6b6b;
+            border: 1px solid rgba(255,85,85,0.12);
+        }
+        .skill-card.unavailable {
+            opacity: 0.55;
+            position: relative;
+        }
+        .skill-card.unavailable::after {
+            content: '暂不可用';
+            position: absolute;
+            top: 12px; right: 14px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 4px;
+            background: rgba(255,85,85,0.12);
+            color: #ff6b6b;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255,85,85,0.15);
+        }
+        .skill-card.unavailable .skill-icon {
+            opacity: 0.4;
+            filter: grayscale(0.6);
+        }
+        .skill-cd {
+            display: inline-block;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-left: 8px;
+            letter-spacing: 0.3px;
+        }
+        .skill-desc {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+        .skill-effects {
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .skill-effects span {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: rgba(240,160,48,0.05);
+            border: 1px solid rgba(240,160,48,0.08);
+            color: var(--primary-light);
+            letter-spacing: 0.3px;
+        }
+
+        /* Equipment */
+        .equip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 20px;
+        }
+        .equip-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            display: flex;
+            gap: 20px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .equip-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: calc(var(--radius-lg) + 1px);
+            background: linear-gradient(135deg, rgba(240,160,48,0.08), transparent 60%);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+        .equip-card:hover::before { opacity: 1; }
+        .equip-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(240,160,48,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(240,160,48,0.04);
+        }
+        .equip-icon {
+            width: 64px; height: 64px;
+            border-radius: 14px;
+            object-fit: contain;
+            flex-shrink: 0;
+            background: rgba(240,160,48,0.05);
+            padding: 10px;
+            image-rendering: pixelated;
+            border: 1px solid rgba(240,160,48,0.1);
+        }
+        .equip-info { flex: 1; }
+        .equip-info h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+        .equip-slot {
+            display: inline-block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 4px;
+            background: rgba(85,255,255,0.08);
+            color: #55ffff;
+            border: 1px solid rgba(85,255,255,0.12);
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .equip-stats {
+            font-size: 0.82rem;
+            color: var(--primary-light);
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+        .equip-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* No Content */
+        .no-content {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+        .no-content .icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+        .no-content p { font-size: 0.9rem; }
+
+        /* Footer */
+        .detail-footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            background: var(--bg-section-dark);
+        }
+        .detail-footer a { color: var(--primary); }
+
+        /* Loading / Error */
+        .loading-state, .error-state {
+            min-height: 60vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 16px;
+        }
+        .error-state h2 { color: var(--accent); font-size: 1.4rem; }
+        .error-state p { color: var(--text-dim); font-size: 0.9rem; }
+        .error-state .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: var(--font);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #0a0a12;
+            box-shadow: 0 4px 20px rgba(240,160,48,0.2);
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+        .error-state .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(240,160,48,0.3);
+        }
+        .spinner {
+            width: 36px; height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Prof-Nav (Previous/Next) */
+        .prof-nav {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 50px 24px;
+            flex-wrap: wrap;
+        }
+        .prof-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-dim);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.5px;
+            min-width: 200px;
+            justify-content: center;
+        }
+        .prof-nav-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .prof-nav-btn:hover {
+            border-color: rgba(240,160,48,0.3);
+            background: var(--bg-card-hover);
+            color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(240,160,48,0.06);
+        }
+        .prof-nav-btn.disabled {
+            opacity: 0.25;
+            pointer-events: none;
+            cursor: default;
+        }
+        .prof-nav-btn .nav-prof-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            object-fit: contain;
+            image-rendering: pixelated;
+        }
+        .prof-nav-btn .nav-prof-label {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+        .prof-nav-btn .nav-prof-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        /* Nav bar prev/next */
+        .nav-prevnext {
+            display: flex; align-items: center; gap: 4px;
+        }
+        .nav-prevnext a {
+            display: flex; align-items: center; gap: 4px;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            transition: var(--transition);
+            border: 1px solid transparent;
+            font-family: var(--font);
+            letter-spacing: 0.3px;
+        }
+        .nav-prevnext a:hover {
+            border-color: rgba(240,160,48,0.2);
+            background: rgba(240,160,48,0.05);
+            color: var(--primary-light);
+        }
+        .nav-prevnext a.disabled {
+            opacity: 0.2;
+            pointer-events: none;
+        }
+        .nav-prevnext svg { width: 12px; height: 12px; flex-shrink: 0; }
+        .nav-prevnext-divider {
+            width: 1px; height: 14px;
+            background: var(--border);
+            margin: 0 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .prof-header { flex-direction: column; align-items: center; text-align: center; }
+            .prof-header-info h1 { font-size: 1.8rem; }
+            .detail-hero { padding: 100px 0 50px; }
+            .items-grid, .skills-grid, .equip-grid { grid-template-columns: 1fr; }
+            .nav-prof-name { display: none; }
+            .nav-prevnext { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <div class="nav-left">
+                <a href="index.html" class="nav-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    返回首页
+                </a>
+                <div class="nav-prevnext" id="navPrevNext">
+                    <a id="navPrev" href="#">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        <span>上一个</span>
+                    </a>
+                    <div class="nav-prevnext-divider"></div>
+                    <a id="navNext" href="#">
+                        <span>下一个</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                <a href="index.html" class="nav-brand">
+                    <img src="icon.png" alt="逍遥PVP" class="nav-icon">
+                    <span class="nav-title">逍遥PVP</span>
+                </a>
+            </div>
+            <span class="nav-prof-name" id="navProfName">职业详情</span>
+        </div>
+    </nav>
+
+    <main id="app">
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p style="color:var(--text-dim);font-size:0.9rem;">加载职业数据中...</p>
+        </div>
+    </main>
+
+    <footer class="detail-footer">
+        &copy; 2026 <a href="index.html">逍遥PVP</a> — 由 Mc_comer 开发 · 网易我的世界基岩版 Mod
+        <p style="margin-top:8px;color:var(--primary-light);font-weight:600;">玩家交流Q群：658837218</p>
+    </footer>
+
+    <script src="professions-data.js"></script>
+    <script>
+        (function() {
+            const app = document.getElementById('app');
+            const params = new URLSearchParams(window.location.search);
+            const profId = params.get('id');
+
+            const prof = getProfessionById(profId);
+
+            /* Nav scroll effect */
+            window.addEventListener('scroll', () => {
+                document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+            });
+
+            if (!prof) {
+                document.title = '职业未找到 — 逍遥PVP';
+                app.innerHTML = `
+                    <div class="error-state">
+                        <h2>职业未找到</h2>
+                        <p>未找到ID为 "${profId || '(空)'}" 的职业数据</p>
+                        <a href="index.html" class="btn">← 返回职业列表</a>
+                    </div>`;
+                return;
+            }
+
+            /* Update nav */
+            document.title = prof.name + ' — 逍遥PVP';
+            document.getElementById('navProfName').textContent = prof.name;
+
+            /* Compute prev/next */
+            const prevProf = getProfessionById(prof.id - 1);
+            const nextProf = getProfessionById(prof.id + 1);
+
+            const navPrev = document.getElementById('navPrev');
+            const navNext = document.getElementById('navNext');
+            if (prevProf) {
+                navPrev.href = 'profession.html?id=' + prevProf.id;
+                navPrev.classList.remove('disabled');
+                navPrev.querySelector('span').textContent = prevProf.name;
+            } else {
+                navPrev.href = '#';
+                navPrev.classList.add('disabled');
+                navPrev.querySelector('span').textContent = '没有了';
+            }
+            if (nextProf) {
+                navNext.href = 'profession.html?id=' + nextProf.id;
+                navNext.classList.remove('disabled');
+                navNext.querySelector('span').textContent = nextProf.name;
+            } else {
+                navNext.href = '#';
+                navNext.classList.add('disabled');
+                navNext.querySelector('span').textContent = '没有了';
+            }
+
+            const diffColors = { '低':'#55ff55', '中':'#55ffff', '高':'#ff55ff', '极高':'#ff4444' };
+            const diffColor = diffColors[prof.difficulty] || '#aaa';
+            const categoryMap = { '基础':'基础', '法师':'法师', '神话':'神话', '攻防兼备':'攻防', '远程':'远程', '远程/神话':'远程/神话', '神话/攻防':'神话/攻防', '特殊':'特殊' };
+            const category = categoryMap[prof.category] || prof.category;
+
+            function itemsHTML(items) {
+                if (!items || items.length === 0) {
+                    return '<div class="no-content"><div class="icon">📦</div><p>该职业没有特殊物品</p></div>';
+                }
+                return items.map(item => {
+                    const typeLabels = { 'weapon':'武器', 'armor':'装备', 'consumable':'消耗品', 'utility':'功能' };
+                    return `
+                    <div class="item-card">
+                        ${item.icon
+                            ? `<img class="item-icon" src="${item.icon}" alt="${item.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                            : ''}
+                        <div class="item-icon-placeholder" style="display:${item.icon ? 'none' : 'flex'}">${item.type === 'weapon' ? '⚔' : item.type === 'armor' ? '🛡' : item.type === 'consumable' ? '🍞' : '🔧'}</div>
+                        <div class="item-info">
+                            <span class="item-type type-${item.type}">${typeLabels[item.type] || item.type}</span>
+                            <h4>${item.name}</h4>
+                            <p class="item-desc">${item.desc}</p>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            function skillsHTML(skills) {
+                if (!skills || skills.length === 0) {
+                    return '<div class="no-content"><div class="icon"><img src="120x_.gif" alt="技能" style="width:48px;height:48px;object-fit:contain;"></div><p>该职业没有特殊技能</p></div>';
+                }
+                return skills.map(s => {
+                    const isUnavailable = s.available === false;
+                    const badgeClass = isUnavailable ? 'skill-unavailable' : (s.type === 'active' ? 'skill-active' : 'skill-passive');
+                    const badgeText = isUnavailable ? '暂不可用' : (s.type === 'active' ? '主动技能' : '被动技能');
+                    return `
+                    <div class="skill-card${isUnavailable ? ' unavailable' : ''}">
+                        <div class="skill-header">
+                            ${s.icon ? `<img class="skill-icon" src="${s.icon}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                            <div class="skill-meta">
+                                <h4>${s.name}</h4>
+                                <div>
+                                    <span class="skill-type-badge ${badgeClass}">${badgeText}</span>
+                                    <span class="skill-cd">CD: ${s.cd}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="skill-desc">${s.desc}</p>
+                        <div class="skill-effects">
+                            ${s.effects.map(e => `<span>${e}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                }).join('');
+            }
+
+            function equipHTML(equipment) {
+                if (!equipment || equipment.length === 0) {
+                    return '<div class="no-content"><div class="icon"><img src="Invicon_Iron_Chestplate.png" alt="装备" style="width:48px;height:48px;object-fit:contain;image-rendering:pixelated;"></div><p>该职业没有专属自定义装备</p></div>';
+                }
+                return equipment.map(e => `
+                    <div class="equip-card">
+                        ${e.icon ? `<img class="equip-icon" src="${e.icon}" alt="${e.name}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                        <div class="equip-info">
+                            <span class="equip-slot">${e.slot}</span>
+                            <h4>${e.name}</h4>
+                            <p class="equip-stats">${e.stats}</p>
+                            <p class="equip-desc">${e.desc}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            /* Render */
+            app.innerHTML = `
+                <section class="detail-hero">
+                    <div class="container">
+                        <div class="prof-header">
+                            <img class="prof-header-icon" src="${prof.icon}" alt="${prof.name}">
+                            <div class="prof-header-info">
+                                <span class="prof-diff-badge" style="color:${diffColor};border-color:${diffColor}33;background:${diffColor}11">难度：${prof.difficulty}</span>
+                                <h1>${prof.name}</h1>
+                                <p class="tagline">${prof.tagline}</p>
+                                <p class="desc">${prof.desc}</p>
+                                <div class="prof-meta">
+                                    <span>难度：${prof.difficulty}</span>
+                                    <span>类型：${category}</span>
+                                    <span>物品数：${prof.items.length}</span>
+                                    <span>技能数：${prof.skills.length}</span>
+                                    ${prof.equipment.length > 0 ? `<span>专属装备：${prof.equipment.length}件</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section section-dark" id="prof-items">
+                    <div class="container">
+                        <h2 class="section-title"><span class="icon-dot"></span>职业物品</h2>
+                        <div class="items-grid">${itemsHTML(prof.items)}</div>
+                    </div>
+                </section>
+
+                <section class="section" id="prof-skills">
+                    <div class="container">
+                        <h2 class="section-title"><span class="icon-dot"></span>职业技能</h2>
+                        <div class="skills-grid">${skillsHTML(prof.skills)}</div>
+                    </div>
+                </section>
+
+                <section class="section section-dark" id="prof-equip">
+                    <div class="container">
+                        <h2 class="section-title"><span class="icon-dot"></span>专属装备</h2>
+                        <div class="equip-grid">${equipHTML(prof.equipment)}</div>
+                    </div>
+                </section>
+
+                <div class="prof-nav">
+                    ${prevProf ? `
+                    <a class="prof-nav-btn" href="profession.html?id=${prevProf.id}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        <div style="text-align:left;">
+                            <div class="nav-prof-label">← 上一个职业</div>
+                            <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+                                <img class="nav-prof-icon" src="${prevProf.icon}" alt="${prevProf.name}">
+                                <span class="nav-prof-name">${prevProf.name}</span>
+                            </div>
+                        </div>
+                    </a>
+                    ` : `
+                    <span class="prof-nav-btn disabled">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                        <span>已经是第一个</span>
+                    </span>
+                    `}
+                    ${nextProf ? `
+                    <a class="prof-nav-btn" href="profession.html?id=${nextProf.id}">
+                        <div style="text-align:right;">
+                            <div class="nav-prof-label">下一个职业 →</div>
+                            <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+                                <span class="nav-prof-name">${nextProf.name}</span>
+                                <img class="nav-prof-icon" src="${nextProf.icon}" alt="${nextProf.name}">
+                            </div>
+                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    ` : `
+                    <span class="prof-nav-btn disabled">
+                        <span>已经是最后一个</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </span>
+                    `}
+                </div>
+            `;
+
+        })();
+    </script>
+</body>
+</html>
