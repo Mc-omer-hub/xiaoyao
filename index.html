@@ -8,6 +8,30 @@
     <link rel="icon" type="image/x-icon" href="icon_64x64.ico">
     <link rel="stylesheet" href="style.css">
 
+    <script>
+        /* 移动端拒绝访问 + 引导下载 */
+        (function(){
+            var ua = navigator.userAgent || '';
+            var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+            var isTablet = /iPad|Android(?!.*Mobile)/i.test(ua);
+            if (isMobile || isTablet) {
+                document.addEventListener('DOMContentLoaded', function(){
+                    document.body.innerHTML =
+                        '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#080810;color:#e8e8f0;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;text-align:center;padding:20px;">' +
+                            '<div>' +
+                                '<img src="icon.png" alt="逍遥PVP" style="width:80px;height:80px;border-radius:16px;margin-bottom:20px;">' +
+                                '<h1 style="font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#7dd3fc,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;">逍遥PVP</h1>' +
+                                '<p style="font-size:0.9rem;color:#7dd3fc;margin-bottom:24px;">手机上请使用 APK 客户端访问</p>' +
+                                '<a href="https://gh-proxy.org/https://github.com/Mc-omer-hub/xiaoyao/releases/download/apk/app-release.apk" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#080810;font-weight:700;border-radius:10px;text-decoration:none;font-size:0.95rem;letter-spacing:1px;">下载逍遥PVP APK</a>' +
+                                '<p style="font-size:0.7rem;color:#5a5a72;margin-top:28px;">本页面仅支持电脑端访问</p>' +
+                            '</div>' +
+                        '</div>';
+                });
+                throw new Error('Mobile redirect');
+            }
+        })();
+    </script>
+
 </head>
 <body>
 
