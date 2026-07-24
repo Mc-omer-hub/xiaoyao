@@ -167,7 +167,7 @@ const professions = [
         desc: '掌控雷电之力的神明，劈开天地的终极力量。雷神之剑附带闪电之力，对闪电伤害有特殊免疫机制。',
         tabs: ['shenhua'],
         items: [
-            { name: '雷神之剑', type: 'weapon', icon: null, desc: '攻击力6点，每次攻击召唤闪电。右键释放十字闪电技能：前后左右各3格范围内降下闪电。' },
+            { name: '雷神之剑', type: 'weapon', icon: null, desc: '攻击力6点，右键释放十字闪电技能：前后左右各3格范围内降下闪电。攻击时被动召唤闪电。' },
             { name: '面包 ×128', type: 'consumable', icon: 'Bread_JE3_BE3.png', desc: '战斗中快速恢复饱食度' },
             { name: '回城', type: 'utility', icon: 'skull.png', desc: '食用后自杀回城，自动补回物品' }
         ],
@@ -205,6 +205,7 @@ const professions = [
             { name: '钻石剑', type: 'weapon', icon: null, desc: '耐久附魔9999' },
             { name: '铁头盔', type: 'armor', icon: null, desc: '保护1 + 耐久9999' },
             { name: '铁胸甲', type: 'armor', icon: 'Invicon_Iron_Chestplate.png', desc: '保护1 + 耐久9999' },
+            { name: '下界合金护腿', type: 'armor', icon: null, desc: '耐久9999' },
             { name: '铁靴子', type: 'armor', icon: null, desc: '保护1 + 耐久9999' },
             { name: '面包 ×128', type: 'consumable', icon: 'Bread_JE3_BE3.png', desc: '战斗中快速恢复饱食度' },
             { name: '回城', type: 'utility', icon: 'skull.png', desc: '食用后自杀回城，自动补回物品' }
@@ -356,14 +357,6 @@ const professions = [
                 cd: '20秒',
                 type: 'active',
                 effects: ['爆炸伤害恒定10点', '7秒免疫摔伤', '向上冲刺飞行']
-            },
-            {
-                name: '君焰',
-                icon: 'flame_lord.png',
-                desc: '右键释放君焰技能，使半径8格内所有实体着火5秒，每秒2点火焰伤害。释放时产生3层火焰粒子环从施法者向外扩散。',
-                cd: '14秒',
-                type: 'active',
-                effects: ['范围着火(5秒)', '每秒2点火焰伤害', '火焰粒子特效']
             }
         ],
         equipment: []
@@ -406,20 +399,15 @@ const professions = [
         desc: '鲜血即力量！血越少伤害越高。纯粹的攻击型职业，放弃防御换取极致的输出能力。',
         tabs: ['teshu'],
         items: [
-            { name: '狂战之刃', type: 'weapon', icon: 'blood_blade.png', desc: '攻击力5点，攻击时恢复造成伤害的0.45倍生命值' },
+            { name: '狂怒战斧', type: 'weapon', icon: null, desc: '铁斧，锋利1 + 耐久9999，纯粹的输出利器' },
+            { name: '铁头盔', type: 'armor', icon: null, desc: '保护1 + 耐久9999' },
+            { name: '钻石胸甲', type: 'armor', icon: null, desc: '保护1 + 耐久9999' },
+            { name: '铁护腿', type: 'armor', icon: null, desc: '保护1 + 耐久9999' },
+            { name: '铁靴子', type: 'armor', icon: null, desc: '保护1 + 耐久9999' },
             { name: '面包 ×128', type: 'consumable', icon: 'Bread_JE3_BE3.png', desc: '战斗中快速恢复饱食度' },
             { name: '回城', type: 'utility', icon: 'skull.png', desc: '食用后自杀回城，自动补回物品' }
         ],
-        skills: [
-            {
-                name: '血怒',
-                icon: 'blood_rage.png',
-                desc: '右键激活血怒：获得2秒力量I效果，大幅提升攻击力。与吸血之刃配合，在狂暴期间既是极致的输出也是有效的续航。',
-                cd: '18秒',
-                type: 'active',
-                effects: ['力量I 2秒', '攻击力大幅提升', '配合吸血续航']
-            }
-        ],
+        skills: [],
         equipment: []
     },
     {
