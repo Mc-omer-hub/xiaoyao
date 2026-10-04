@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>正在前往 逍遥PVP 官网 ...</title>
+<meta name="description" content="逍遥PVP 官网入口">
+<link rel="icon" type="image/x-icon" href="icon_64x64.ico">
+
+<!-- 没有 JS 时的兜底跳转 -->
+<meta http-equiv="refresh" content="1;url=http://150.138.84.90:13708/">
+
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --primary:      #38bdf8;
+    --primary-dark: #0ea5e9;
+    --primary-dim:  #7dd3fc;
+    --bg-dark:      #080810;
+    --bg-card:      #10101e;
+    --border:       #1a1a30;
+    --text:         #e8e8f0;
+    --text-dim:     #8888a0;
+    --text-muted:   #5a5a72;
+  }
+
+  html, body { height:100%; }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    background: var(--bg-dark);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  /* 背景：淡淡的青色网格 + 中心光晕 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(56,189,248,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 620px;
+    height: 620px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(56,189,248,.10) 0%, rgba(56,189,248,0) 62%);
+    pointer-events: none;
+  }
+
+  .box {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    animation: rise .5s cubic-bezier(.4,0,.2,1) both;
+  }
+  @keyframes rise {
+    from { opacity:0; transform: translateY(14px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: block;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 28px rgba(56,189,248,.18);
+  }
+
+  .ring {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 24px;
+    border: 3px solid rgba(56,189,248,.22);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  h1 {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+    margin-bottom: 10px;
+  }
+  h1 span { color: var(--primary); }
+
+  p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .btn-main {
+    display: inline-block;
+    padding: 13px 34px;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #04121c;
+    text-decoration: none;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    box-shadow: 0 4px 20px rgba(56,189,248,.32);
+    transition: transform .25s, box-shadow .25s, filter .25s;
+  }
+  .btn-main:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+    box-shadow: 0 8px 26px rgba(56,189,248,.45);
+  }
+  .btn-main:active { transform: translateY(0); }
+
+  .btn-sub {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-dim);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: border-color .25s, color .25s;
+  }
+  .btn-sub:hover { border-color: var(--primary); color: var(--primary); }
+
+  .url {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    word-break: break-all;
+  }
+
+  .qq {
+    margin-top: 26px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .qq b { color: var(--primary-dim); font-weight: 600; }
+
+  @media (max-width: 400px) {
+    h1 { font-size: 17px; }
+    .logo { width: 56px; height: 56px; }
+    .btn-main { padding: 12px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <img class="logo" src="icon.png" alt="逍遥PVP" onerror="this.style.display='none'">
+  <div class="ring"></div>
+
+  <h1>正在前往 <span>逍遥PVP</span> 官网</h1>
+  <p>如果浏览器没有自动跳转，点下面的按钮。</p>
+
+  <a class="btn-main" href="http://150.138.84.90:13708/" id="go">进入官网</a><br>
+  <a class="btn-sub" href="http://150.138.84.90:13708/forum.html">直接去玩家论坛</a>
+
+  <div class="url">http://150.138.84.90:13708/</div>
+
+  <div class="qq">玩家交流 Q 群：<b>658837218</b></div>
+</div>
+
+<script>
+  (function () {
+    var target = 'http://150.138.84.90:13708/';
+
+    // 用 replace 而不是 href：跳过去之后按「后退」不会又弹回这个中转页
+    try { window.location.replace(target); } catch (e) { }
+
+    // 极少数情况下 replace 被拦（比如某些内置浏览器），再补一次
+    setTimeout(function () {
+      if (!document.hidden && location.href.indexOf('13708') === -1) {
+        try { window.location.href = target; } catch (e) { }
+      }
+    }, 1500);
+  })();
+</script>
+
+</body>
+</html>
